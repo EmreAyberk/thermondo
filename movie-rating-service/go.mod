@@ -3,8 +3,10 @@ module movie-rating-service
 go 1.24
 
 require (
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/gofiber/swagger v1.1.1
+	github.com/spf13/cast v1.9.2
 	gorm.io/gorm v1.30.0
 )
 

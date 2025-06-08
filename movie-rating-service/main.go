@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
 	"log/slog"
+	"movie-rating-service/config"
 	"os"
 	"time"
 )
@@ -19,6 +20,11 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
+	err := config.Init()
+	if err != nil {
+		panic(err)
+	}
+
 	app := fiber.New(fiber.Config{
 		ReadTimeout:  time.Second * 10,
 		WriteTimeout: time.Second * 10,
@@ -27,7 +33,7 @@ func main() {
 
 	app.Get("/monitor", monitor.New())
 
-	err := app.Listen(":8080")
+	err = app.Listen(":8080")
 	if err != nil {
 		panic(err)
 	}

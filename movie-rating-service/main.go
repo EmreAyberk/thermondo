@@ -54,7 +54,9 @@ func main() {
 	controller.NewUserController(app, userService)
 
 	movieRepository := repository.NewMovieRepository(database)
-	movieService := service.NewMovieService(movieRepository)
+	movieCacheRepository := repository.NewCachedMovieRepository(movieRepository, time.Second*30)
+
+	movieService := service.NewMovieService(movieCacheRepository)
 	controller.NewMovieController(app, movieService)
 
 	ratingRepository := repository.NewRatingRepository(database)

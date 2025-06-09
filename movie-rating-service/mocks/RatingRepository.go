@@ -6,6 +6,8 @@ import (
 	context "context"
 	domain "movie-rating-service/internal/domain"
 
+	gorm "gorm.io/gorm"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -14,9 +16,16 @@ type RatingRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, rating
-func (_m *RatingRepository) Create(ctx context.Context, rating domain.Rating) (*domain.Rating, error) {
-	ret := _m.Called(ctx, rating)
+// Create provides a mock function with given fields: ctx, rating, tx
+func (_m *RatingRepository) Create(ctx context.Context, rating domain.Rating, tx ...*gorm.DB) (*domain.Rating, error) {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, rating)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
@@ -24,19 +33,19 @@ func (_m *RatingRepository) Create(ctx context.Context, rating domain.Rating) (*
 
 	var r0 *domain.Rating
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, domain.Rating) (*domain.Rating, error)); ok {
-		return rf(ctx, rating)
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Rating, ...*gorm.DB) (*domain.Rating, error)); ok {
+		return rf(ctx, rating, tx...)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, domain.Rating) *domain.Rating); ok {
-		r0 = rf(ctx, rating)
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Rating, ...*gorm.DB) *domain.Rating); ok {
+		r0 = rf(ctx, rating, tx...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Rating)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, domain.Rating) error); ok {
-		r1 = rf(ctx, rating)
+	if rf, ok := ret.Get(1).(func(context.Context, domain.Rating, ...*gorm.DB) error); ok {
+		r1 = rf(ctx, rating, tx...)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -44,9 +53,41 @@ func (_m *RatingRepository) Create(ctx context.Context, rating domain.Rating) (*
 	return r0, r1
 }
 
-// GetByUserID provides a mock function with given fields: ctx, userID
-func (_m *RatingRepository) GetByUserID(ctx context.Context, userID uint) ([]domain.Rating, error) {
-	ret := _m.Called(ctx, userID)
+// Delete provides a mock function with given fields: ctx, rating, tx
+func (_m *RatingRepository) Delete(ctx context.Context, rating domain.Rating, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, rating)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Rating, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, rating, tx...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetByUserID provides a mock function with given fields: ctx, userID, tx
+func (_m *RatingRepository) GetByUserID(ctx context.Context, userID uint, tx ...*gorm.DB) ([]domain.Rating, error) {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, userID)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByUserID")
@@ -54,24 +95,86 @@ func (_m *RatingRepository) GetByUserID(ctx context.Context, userID uint) ([]dom
 
 	var r0 []domain.Rating
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, uint) ([]domain.Rating, error)); ok {
-		return rf(ctx, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, uint, ...*gorm.DB) ([]domain.Rating, error)); ok {
+		return rf(ctx, userID, tx...)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, uint) []domain.Rating); ok {
-		r0 = rf(ctx, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, uint, ...*gorm.DB) []domain.Rating); ok {
+		r0 = rf(ctx, userID, tx...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.Rating)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
-		r1 = rf(ctx, userID)
+	if rf, ok := ret.Get(1).(func(context.Context, uint, ...*gorm.DB) error); ok {
+		r1 = rf(ctx, userID, tx...)
 	} else {
 		r1 = ret.Error(1)
 	}
 
 	return r0, r1
+}
+
+// GetByUserIDAndMovieID provides a mock function with given fields: ctx, userID, movieID, tx
+func (_m *RatingRepository) GetByUserIDAndMovieID(ctx context.Context, userID uint, movieID uint, tx ...*gorm.DB) (*domain.Rating, error) {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, userID, movieID)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByUserIDAndMovieID")
+	}
+
+	var r0 *domain.Rating
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint, uint, ...*gorm.DB) (*domain.Rating, error)); ok {
+		return rf(ctx, userID, movieID, tx...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, uint, uint, ...*gorm.DB) *domain.Rating); ok {
+		r0 = rf(ctx, userID, movieID, tx...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Rating)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, uint, uint, ...*gorm.DB) error); ok {
+		r1 = rf(ctx, userID, movieID, tx...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Update provides a mock function with given fields: ctx, rating, tx
+func (_m *RatingRepository) Update(ctx context.Context, rating domain.Rating, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, rating)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Rating, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, rating, tx...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewRatingRepository creates a new instance of RatingRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

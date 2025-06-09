@@ -22,7 +22,9 @@ func NewRatingController(app *fiber.App, ratingService service.RatingService) {
 
 	controller := &ratingController{ratingService: ratingService}
 
-	app.Post("/rating", controller.CreateRating)
+	app.Post("/rating", authMiddleware.UserHandler, controller.CreateRating)
+	app.Patch("/rating", authMiddleware.UserHandler, controller.UpdateRating)
+	app.Delete("/rating", authMiddleware.UserHandler, controller.DeleteRating)
 	app.Get("/rating/user", authMiddleware.UserHandler, controller.GetUserRatings)
 }
 
@@ -50,6 +52,68 @@ func (c *ratingController) CreateRating(ctx *fiber.Ctx) error {
 
 	slog.Info("Rating created", "user_id", res.ID)
 	return ctx.Status(fiber.StatusCreated).JSON(response.Success(res))
+}
+
+// @Summary Update Rating
+// @Tags Rating
+// @Success 200 {object} response.SuccessResponse{data=response.UpdateRating}
+// @Success 400 {object} response.ErrorResponse
+// @Success 500 {object} response.ErrorResponse
+// @Router /rating [patch]
+func (c *ratingController) UpdateRating(ctx *fiber.Ctx) error {
+	var req request.UpdateRating
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	claims := ctx.Locals("user").(jwt.MapClaims)
+
+	req.UserID = cast.ToUint(claims["user_id"])
+
+	err := validate.V.Struct(req)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.ratingService.Update(ctx.UserContext(), req)
+	if err != nil {
+		slog.Info("Rating could not update")
+		return err
+	}
+
+	slog.Info("Rating updated", "user_id", res.ID)
+	return ctx.Status(fiber.StatusOK).JSON(response.Success(res))
+}
+
+// @Summary Delete Rating
+// @Tags Rating
+// @Success 200 {object} response.SuccessResponse{data=response.DeleteRating}
+// @Success 400 {object} response.ErrorResponse
+// @Success 500 {object} response.ErrorResponse
+// @Router /rating [delete]
+func (c *ratingController) DeleteRating(ctx *fiber.Ctx) error {
+	var req request.DeleteRating
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	claims := ctx.Locals("user").(jwt.MapClaims)
+
+	req.UserID = cast.ToUint(claims["user_id"])
+
+	err := validate.V.Struct(req)
+	if err != nil {
+		return err
+	}
+
+	err = c.ratingService.Delete(ctx.UserContext(), req)
+	if err != nil {
+		slog.Info("Rating could not update")
+		return err
+	}
+
+	slog.Info("Rating deleted")
+	return ctx.Status(fiber.StatusOK).JSON(response.Success(struct{}{}))
 }
 
 // @Summary GetUserRatings User

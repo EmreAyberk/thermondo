@@ -6,6 +6,8 @@ import (
 	context "context"
 	domain "movie-rating-service/internal/domain"
 
+	gorm "gorm.io/gorm"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -14,9 +16,41 @@ type MovieRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, movie
-func (_m *MovieRepository) Create(ctx context.Context, movie domain.Movie) (*domain.Movie, error) {
-	ret := _m.Called(ctx, movie)
+// AddRating provides a mock function with given fields: ctx, movieID, score, tx
+func (_m *MovieRepository) AddRating(ctx context.Context, movieID uint, score float64, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, movieID, score)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AddRating")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint, float64, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, movieID, score, tx...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Create provides a mock function with given fields: ctx, movie, tx
+func (_m *MovieRepository) Create(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) (*domain.Movie, error) {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, movie)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
@@ -24,24 +58,49 @@ func (_m *MovieRepository) Create(ctx context.Context, movie domain.Movie) (*dom
 
 	var r0 *domain.Movie
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, domain.Movie) (*domain.Movie, error)); ok {
-		return rf(ctx, movie)
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Movie, ...*gorm.DB) (*domain.Movie, error)); ok {
+		return rf(ctx, movie, tx...)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, domain.Movie) *domain.Movie); ok {
-		r0 = rf(ctx, movie)
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Movie, ...*gorm.DB) *domain.Movie); ok {
+		r0 = rf(ctx, movie, tx...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Movie)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, domain.Movie) error); ok {
-		r1 = rf(ctx, movie)
+	if rf, ok := ret.Get(1).(func(context.Context, domain.Movie, ...*gorm.DB) error); ok {
+		r1 = rf(ctx, movie, tx...)
 	} else {
 		r1 = ret.Error(1)
 	}
 
 	return r0, r1
+}
+
+// DeleteRating provides a mock function with given fields: ctx, movieID, score, tx
+func (_m *MovieRepository) DeleteRating(ctx context.Context, movieID uint, score float64, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, movieID, score)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteRating")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint, float64, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, movieID, score, tx...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // Get provides a mock function with given fields: ctx, id
@@ -104,17 +163,24 @@ func (_m *MovieRepository) List(ctx context.Context) ([]domain.Movie, error) {
 	return r0, r1
 }
 
-// UpdateRating provides a mock function with given fields: ctx, movieID, score
-func (_m *MovieRepository) UpdateRating(ctx context.Context, movieID uint, score float64) error {
-	ret := _m.Called(ctx, movieID, score)
+// UpdateRating provides a mock function with given fields: ctx, movieID, oldScore, newScore, tx
+func (_m *MovieRepository) UpdateRating(ctx context.Context, movieID uint, oldScore float64, newScore float64, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, movieID, oldScore, newScore)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateRating")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, uint, float64) error); ok {
-		r0 = rf(ctx, movieID, score)
+	if rf, ok := ret.Get(0).(func(context.Context, uint, float64, float64, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, movieID, oldScore, newScore, tx...)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -3,6 +3,9 @@ package response
 type CreateRating struct {
 	ID uint `json:"id"`
 }
+type UpdateRating struct {
+	ID uint `json:"id"`
+}
 
 type GetUserRatings struct {
 	Ratings []Ratings `json:"ratings"`

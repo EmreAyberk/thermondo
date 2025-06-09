@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"gorm.io/gorm"
 	"movie-rating-service/internal/domain"
 	"sync"
 	"time"
@@ -13,7 +14,6 @@ type cachedMovieRepository struct {
 	mu              sync.RWMutex
 	ttl             time.Duration
 }
-
 type cacheItem struct {
 	data      *domain.Movie
 	expiresAt time.Time
@@ -50,7 +50,7 @@ func (c *cachedMovieRepository) Get(ctx context.Context, id uint) (*domain.Movie
 	return movie, nil
 }
 
-func (c *cachedMovieRepository) Create(ctx context.Context, movie domain.Movie) (*domain.Movie, error) {
+func (c *cachedMovieRepository) Create(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) (*domain.Movie, error) {
 	return c.movieRepository.Create(ctx, movie)
 }
 
@@ -58,8 +58,44 @@ func (c *cachedMovieRepository) List(ctx context.Context) ([]domain.Movie, error
 	return c.movieRepository.List(ctx)
 }
 
-func (c *cachedMovieRepository) UpdateRating(ctx context.Context, movieID uint, score float64) error {
-	err := c.movieRepository.UpdateRating(ctx, movieID, score)
+func (c *cachedMovieRepository) AddRating(ctx context.Context, movieID uint, score float64, tx ...*gorm.DB) error {
+	err := c.movieRepository.AddRating(ctx, movieID, score, tx...)
+	if err != nil {
+		return err
+	}
+
+	movie, err := c.movieRepository.Get(ctx, movieID)
+	if err != nil {
+		return err
+	}
+
+	c.mu.Lock()
+	c.idCache[movieID] = cacheItem{data: movie, expiresAt: time.Now().Add(c.ttl)}
+	c.mu.Unlock()
+
+	return nil
+}
+
+func (c *cachedMovieRepository) UpdateRating(ctx context.Context, movieID uint, oldScore, newScore float64, tx ...*gorm.DB) error {
+	err := c.movieRepository.UpdateRating(ctx, movieID, oldScore, newScore, tx...)
+	if err != nil {
+		return err
+	}
+
+	movie, err := c.movieRepository.Get(ctx, movieID)
+	if err != nil {
+		return err
+	}
+
+	c.mu.Lock()
+	c.idCache[movieID] = cacheItem{data: movie, expiresAt: time.Now().Add(c.ttl)}
+	c.mu.Unlock()
+
+	return nil
+}
+
+func (c *cachedMovieRepository) DeleteRating(ctx context.Context, movieID uint, score float64, tx ...*gorm.DB) error {
+	err := c.movieRepository.DeleteRating(ctx, movieID, score, tx...)
 	if err != nil {
 		return err
 	}

@@ -46,6 +46,24 @@ func (_m *RatingService) Create(ctx context.Context, req request.CreateRating) (
 	return r0, r1
 }
 
+// Delete provides a mock function with given fields: ctx, req
+func (_m *RatingService) Delete(ctx context.Context, req request.DeleteRating) error {
+	ret := _m.Called(ctx, req)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, request.DeleteRating) error); ok {
+		r0 = rf(ctx, req)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetRatingsByUserID provides a mock function with given fields: ctx, req
 func (_m *RatingService) GetRatingsByUserID(ctx context.Context, req request.GetUserRatings) (*response.GetUserRatings, error) {
 	ret := _m.Called(ctx, req)
@@ -68,6 +86,36 @@ func (_m *RatingService) GetRatingsByUserID(ctx context.Context, req request.Get
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, request.GetUserRatings) error); ok {
+		r1 = rf(ctx, req)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Update provides a mock function with given fields: ctx, req
+func (_m *RatingService) Update(ctx context.Context, req request.UpdateRating) (*response.UpdateRating, error) {
+	ret := _m.Called(ctx, req)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 *response.UpdateRating
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, request.UpdateRating) (*response.UpdateRating, error)); ok {
+		return rf(ctx, req)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, request.UpdateRating) *response.UpdateRating); ok {
+		r0 = rf(ctx, req)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*response.UpdateRating)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, request.UpdateRating) error); ok {
 		r1 = rf(ctx, req)
 	} else {
 		r1 = ret.Error(1)

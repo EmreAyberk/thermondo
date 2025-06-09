@@ -10,6 +10,19 @@ import (
 	"time"
 )
 
+/*
+No interface is needed because:
+- GORM already provides all required methods and abstractions.
+- Only mock at the service or domain layer for tests.
+- Avoids unnecessary interface pollution.
+*/
+
+var db *gorm.DB
+
+func BeginTransaction() *gorm.DB {
+	return db.Begin()
+}
+
 func Connect() (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
@@ -49,6 +62,7 @@ func Connect() (*gorm.DB, error) {
 		}
 	}
 
+	db = dbConn
 	return dbConn, nil
 }
 

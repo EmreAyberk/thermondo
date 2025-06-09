@@ -99,6 +99,4 @@ func main() {
 	} else {
 		slog.Info("Server gracefully stopped")
 	}
-	return
-
 }

@@ -16,8 +16,14 @@ type Rating struct {
 	User  User  `json:"-" gorm:"foreignKey:UserID"`
 }
 
-func (r *Rating) RateMovieResponse() *response.CreateRating {
+func (r *Rating) CreateRatingResponse() *response.CreateRating {
 	return &response.CreateRating{
+		ID: r.ID,
+	}
+}
+
+func (r *Rating) UpdateMovieResponse() *response.UpdateRating {
+	return &response.UpdateRating{
 		ID: r.ID,
 	}
 }

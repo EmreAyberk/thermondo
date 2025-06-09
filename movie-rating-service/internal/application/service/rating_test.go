@@ -55,7 +55,7 @@ func (r *RatingServiceTest) TestPromotionService_Create_Success() {
 		return r.UserID == req.UserID && r.MovieID == req.MovieID && r.Score == req.Score && r.Review == req.Review
 	})).Return(rating, nil).Once()
 
-	r.m.On("UpdateRating", ctx, req.MovieID, req.Score).Return(nil).Once()
+	r.m.On("AddRating", ctx, req.MovieID, req.Score).Return(nil).Once()
 
 	result, err := r.service.Create(ctx, req)
 
@@ -114,7 +114,7 @@ func (r *RatingServiceTest) TestPromotionService_Create_Error_Failed_To_Update_M
 		return r.UserID == req.UserID && r.MovieID == req.MovieID && r.Score == req.Score && r.Review == req.Review
 	})).Return(rating, nil).Once()
 
-	r.m.On("UpdateRating", ctx, req.MovieID, req.Score).Return(errors.New("there is an error")).Once()
+	r.m.On("AddRating", ctx, req.MovieID, req.Score).Return(errors.New("there is an error")).Once()
 
 	result, err := r.service.Create(ctx, req)
 

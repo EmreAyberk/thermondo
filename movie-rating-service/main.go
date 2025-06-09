@@ -14,9 +14,11 @@ import (
 	"movie-rating-service/internal/application/service"
 	"movie-rating-service/internal/common"
 	"movie-rating-service/internal/infrastructure/db"
+	"movie-rating-service/internal/infrastructure/db/seeder"
 	"movie-rating-service/internal/infrastructure/repository"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -41,10 +43,23 @@ func main() {
 		panic(err)
 	}
 
+	if len(os.Args) > 1 && strings.EqualFold(os.Args[1], "seeder") {
+		s := seeder.NewSeeder(database)
+		err = s.Seed()
+		if err != nil {
+			slog.Info("Seeder error", err)
+		}
+		return
+	}
+
 	app := fiber.New(fiber.Config{
 		ReadTimeout:  time.Second * 10,
 		WriteTimeout: time.Second * 10,
 		ErrorHandler: common.ErrorHandler()})
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
+
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	prometheus := fiberprometheus.New("movie-rating-service")

@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  golang-app:
+  movie-rating-service-app:
     build:
       context: .
       dockerfile: Dockerfile

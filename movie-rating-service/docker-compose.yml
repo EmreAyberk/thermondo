@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  golang-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ENVIRONMENT: dev
+      DEBUG_MODE: false
+      PORT: 8080
+      JWT_SECRET: secret
+      DB_USER: thermondo_user
+      DB_PASSWORD: thermondo_pass
+      DB_HOST: postgresdb
+      DB_PORT: 5432
+      DB_NAME: thermondo
+      DB_SSLMODE: disable
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+      
+    networks:
+      - app_network
+
+  postgresdb:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: thermondo_user
+      POSTGRES_PASSWORD: thermondo_pass
+      POSTGRES_DB: thermondo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U thermondo_user -d thermondo"]
+      start_period: 5s
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge

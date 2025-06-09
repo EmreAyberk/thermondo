@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/swagger"
 	"log/slog"
 	"movie-rating-service/config"
+	_ "movie-rating-service/docs"
 	"movie-rating-service/internal/application/controller"
 	"movie-rating-service/internal/application/service"
 	"movie-rating-service/internal/common"
@@ -55,6 +56,10 @@ func main() {
 	movieRepository := repository.NewMovieRepository(database)
 	movieService := service.NewMovieService(movieRepository)
 	controller.NewMovieController(app, movieService)
+
+	ratingRepository := repository.NewRatingRepository(database)
+	ratingService := service.NewRatingService(ratingRepository, movieRepository)
+	controller.NewRatingController(app, ratingService)
 
 	err = app.Listen(fmt.Sprintf(":%d", config.Cfg.Port))
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cast"
 	"log/slog"
 	"movie-rating-service/config"
+	"movie-rating-service/internal/application/middleware"
 	"movie-rating-service/internal/application/models/request"
 	"movie-rating-service/internal/application/models/response"
 	"movie-rating-service/internal/application/service"

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"gorm.io/gorm"
+	"movie-rating-service/internal/application/models/response"
 )
 
 type Rating struct {
@@ -13,4 +14,27 @@ type Rating struct {
 
 	Movie Movie `json:"-" gorm:"foreignKey:MovieID"`
 	User  User  `json:"-" gorm:"foreignKey:UserID"`
+}
+
+func (r *Rating) RateMovieResponse() *response.CreateRating {
+	return &response.CreateRating{
+		ID: r.ID,
+	}
+}
+
+func (r *Rating) GetRatingByUserIdResponse() *response.Ratings {
+	return &response.Ratings{
+		RatedMovie: response.RatedMovie{
+			Title:       r.Movie.Title,
+			Description: r.Movie.Description,
+			Genre:       r.Movie.Genre,
+			Director:    r.Movie.Director,
+			Year:        r.Movie.Year,
+			Rating:      r.Movie.Rating,
+		},
+		Rating: response.Rating{
+			Score:  r.Score,
+			Review: r.Review,
+		},
+	}
 }

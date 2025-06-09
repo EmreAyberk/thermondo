@@ -1,11 +1,18 @@
 package main
 
 import (
+	"fmt"
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
 	"log/slog"
 	"movie-rating-service/config"
+	"movie-rating-service/internal/application/controller"
+	"movie-rating-service/internal/application/service"
+	"movie-rating-service/internal/common"
+	"movie-rating-service/internal/infrastructure/db"
+	"movie-rating-service/internal/infrastructure/repository"
 	"os"
 	"time"
 )
@@ -25,15 +32,31 @@ func main() {
 		panic(err)
 	}
 
+	database, err := db.Connect()
+	if err != nil {
+		panic(err)
+	}
+
 	app := fiber.New(fiber.Config{
 		ReadTimeout:  time.Second * 10,
 		WriteTimeout: time.Second * 10,
-	})
+		ErrorHandler: common.ErrorHandler()})
 	app.Get("/swagger/*", swagger.HandlerDefault)
+
+	prometheus := fiberprometheus.New("movie-rating-service")
+	prometheus.RegisterAt(app, "/metrics")
 
 	app.Get("/monitor", monitor.New())
 
-	err = app.Listen(":8080")
+	userRepository := repository.NewUserRepository(database)
+	userService := service.NewUserService(userRepository)
+	controller.NewUserController(app, userService)
+
+	movieRepository := repository.NewMovieRepository(database)
+	movieService := service.NewMovieService(movieRepository)
+	controller.NewMovieController(app, movieService)
+
+	err = app.Listen(fmt.Sprintf(":%d", config.Cfg.Port))
 	if err != nil {
 		panic(err)
 	}

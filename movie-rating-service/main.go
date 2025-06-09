@@ -47,7 +47,7 @@ func main() {
 		s := seeder.NewSeeder(database)
 		err = s.Seed()
 		if err != nil {
-			slog.Info("Seeder error", err)
+			slog.Info("Seeder error", "error", err)
 		}
 		return
 	}

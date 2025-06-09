@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
@@ -15,6 +16,8 @@ import (
 	"movie-rating-service/internal/infrastructure/db"
 	"movie-rating-service/internal/infrastructure/repository"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -63,9 +66,24 @@ func main() {
 	ratingService := service.NewRatingService(ratingRepository, movieRepository)
 	controller.NewRatingController(app, ratingService)
 
-	err = app.Listen(fmt.Sprintf(":%d", config.Cfg.Port))
-	if err != nil {
-		panic(err)
+	go func() {
+		if err = app.Listen(fmt.Sprintf(":%d", config.Cfg.Port)); err != nil {
+			panic(err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	slog.Info("Shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := app.ShutdownWithContext(ctx); err != nil {
+		slog.Error("Server forced to shutdown", "error", err)
+	} else {
+		slog.Info("Server gracefully stopped")
 	}
+	return
 
 }

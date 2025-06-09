@@ -28,7 +28,7 @@ func ErrorHandler() func(ctx *fiber.Ctx, err error) error {
 			return ctx.Status(fiber.StatusNotFound).JSON(response.Error("Record not found.", err.Error()))
 		}
 		if isUniqueViolation(err) {
-			return ctx.Status(fiber.StatusBadRequest).JSON(response.Error("Cannot use same values.", err.Error()))
+			return ctx.Status(fiber.StatusConflict).JSON(response.Error("Cannot use same values.", err.Error()))
 		}
 
 		return ctx.Status(fiber.StatusInternalServerError).JSON(response.Error("Internal server error.", err.Error()))

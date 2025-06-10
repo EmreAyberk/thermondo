@@ -58,6 +58,52 @@ movie-rating-service/
 
 ---
 
+## 🗃️ Domain Models
+
+### User
+
+Represents an application user.
+
+- `ID` *(uint, primary key)*: Unique user identifier.
+- `Username` *(unique)*: Login name, must be unique.
+- `Password`: Hashed password for authentication.
+- `Name`, `Surname`, `Email`, `Phone`, `Address`: Profile information.
+- `IsAdmin` *(bool)*: Set to `true` for admin users.
+
+---
+
+### Movie
+
+Represents a movie available for rating.
+
+- `ID` *(uint, primary key)*: Unique movie identifier.
+- `Title`, `Description`, `Genre`, `Director`, `Year`: Movie metadata.
+- `Rating` *(float64)*: Average rating (calculated).
+- `RatingCount` *(int64)*: Number of ratings for this movie.
+
+---
+
+### Rating
+
+Represents a rating given by a user to a movie.
+
+- `ID` *(uint, primary key)*: Unique rating identifier.
+- `UserID`: The user who gave the rating (foreign key).
+- `MovieID`: The movie being rated (foreign key).
+- `Score` *(float64)*: The rating score (e.g., 0–5).
+- `Review`: Optional text review.
+- **Composite Unique Index:**  
+  - There is a unique constraint on (`UserID`, `MovieID`) to ensure that **each user can only rate each movie once**.
+
+---
+
+**Relationships:**  
+- A `User` can rate many `Movies`.
+- A `Movie` can be rated by many `Users`.
+- The `Rating` table links users and movies, with each (user, movie) pair unique.
+
+---
+
 ## ⚡️ Quick Start (Development)
 
 ### 1. Clone the repo
@@ -75,17 +121,28 @@ docker-compose up -d
 
 ---
 
-## 🌱 Database Seeder
+## 🌱 Data Seeder
 
-To populate your database with demo users, movies, and ratings, you can manually run the seeder at any time:
+This project includes a **data seeder** for quickly populating your database with demo data for local development and testing.  
+The seeder will insert sample users, movies, and ratings:
 
+- **Users:**  
+  3 demo users (`alice`, `bob`, `carol`), each with basic profile information. The password for all is the same, `1234` hashed version and only `carol` is admin.
+- **Movies:**  
+  3 movies from different genres and directors, with basic metadata.
+- **Ratings:**  
+  5 example ratings linking users and movies, each with a score and a review.
+
+**How to run the seeder:**  
+Use this command to execute the seeder (from your project root):
 ```sh
 docker-compose run --rm movie-rating-service-app go run main.go seeder
 ```
+- The seeder will log its progress and insert all sample data into your connected database.
+- You can rerun the seeder any time to reset or re-populate demo data.
 
-- This will execute the seeding logic and then exit.
-- **Seeder does not run automatically** on `docker-compose up`—you must invoke it explicitly when you want to re-seed
-  your data.
+**Note:**  
+The seeder does **not** run automatically with the app; you must invoke it manually when needed.
 
 ## 📚 API Documentation
 
@@ -132,7 +189,27 @@ docker-compose run --rm movie-rating-service-app go run main.go seeder
 
 ---
 
-> For the full API and request/response schema, check `/swagger/index.html`.
+## 🔐 Authentication & Authorization
+
+All protected endpoints use JWT-based authentication, handled by custom middleware.
+
+### User vs. Admin Middleware
+
+- **UserHandler:**
+  - Checks for a valid JWT in the `Authorization` header.
+  - Validates the token and extracts user claims.
+  - On success, attaches claims to the request context (accessible via `ctx.Locals("user")`).
+  - Grants access to any authenticated user.
+
+- **AdminHandler:**
+  - Performs all checks of `UserHandler`.
+  - Additionally verifies that the `isAdmin` claim is present and set to `true`.
+  - Denies access (`401 Unauthorized`) if the user is not an admin.
+
+**In summary:**
+- Use `UserHandler` to protect routes accessible to any logged-in user.
+- Use `AdminHandler` to restrict routes to admin users only.
+
 ---
 
 ## 🧪 Testing
@@ -154,6 +231,24 @@ docker-compose run --rm movie-rating-service-app go run main.go seeder
   ```sh
   golangci-lint run
   ```
+---
+
+## 🗄️ Caching
+
+Caching is applied using the **decorator pattern** to wrap repository methods with in-memory, TTL-based cache layers. This accelerates repeated read operations and reduces database load for frequently requested data.
+
+- **Where is caching used?**
+  - **Movies:** List and details are cached with per-item TTL.
+
+- **How does it work?**
+  - Decorator checks the in-memory cache before hitting the database.
+  - Cache entries expire after a fixed TTL.
+  - Write and delete operations update or **invalidate** the cache as needed.
+
+- **Why this approach?**
+  - Keeps caching logic separate from business logic.
+  - Easy to test and extend.
+  - Uses in-memory storage for simplicity—no external cache is required.
 
 ---
 

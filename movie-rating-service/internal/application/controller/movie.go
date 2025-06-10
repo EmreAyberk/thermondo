@@ -52,7 +52,7 @@ func (c *movieController) GetMovie(ctx *fiber.Ctx) error {
 
 // @Summary Update Movie
 // @Tags Movie
-// @Success 200 {object} response.SuccessResponse{data=response.UpdateMovie}
+// @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
 // @Router /movie [put]
@@ -81,7 +81,7 @@ func (c *movieController) UpdateMovie(ctx *fiber.Ctx) error {
 
 // @Summary Delete Movie
 // @Tags Movie
-// @Success 200 {object} response.SuccessResponse{data=response.DeleteMovie}
+// @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
 // @Router /movie [delete]

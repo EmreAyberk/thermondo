@@ -5,6 +5,11 @@ definitions:
       id:
         type: integer
     type: object
+  response.CreateRating:
+    properties:
+      id:
+        type: integer
+    type: object
   response.CreateUser:
     properties:
       id:
@@ -55,6 +60,42 @@ definitions:
       username:
         type: string
     type: object
+  response.GetUserRatings:
+    properties:
+      ratings:
+        items:
+          $ref: '#/definitions/response.Ratings'
+        type: array
+    type: object
+  response.RatedMovie:
+    properties:
+      description:
+        type: string
+      director:
+        type: string
+      genre:
+        type: string
+      rating:
+        type: number
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+  response.Rating:
+    properties:
+      review:
+        type: string
+      score:
+        type: number
+    type: object
+  response.Ratings:
+    properties:
+      rated_movie:
+        $ref: '#/definitions/response.RatedMovie'
+      rating:
+        $ref: '#/definitions/response.Rating'
+    type: object
   response.SuccessResponse:
     properties:
       data: {}
@@ -62,6 +103,11 @@ definitions:
         type: string
       success:
         type: string
+    type: object
+  response.UpdateRating:
+    properties:
+      id:
+        type: integer
     type: object
 host: localhost:8080
 info:
@@ -96,6 +142,23 @@ paths:
       tags:
       - User
   /movie:
+    delete:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Delete Movie
+      tags:
+      - Movie
     post:
       responses:
         "200":
@@ -116,6 +179,23 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       summary: Create Movie
+      tags:
+      - Movie
+    put:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update Movie
       tags:
       - Movie
   /movie/:id:
@@ -147,6 +227,91 @@ paths:
       summary: GetByID Movie
       tags:
       - Movie
+  /rating:
+    delete:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Delete Rating
+      tags:
+      - Rating
+    patch:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UpdateRating'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update Rating
+      tags:
+      - Rating
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.CreateRating'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create Rating
+      tags:
+      - Rating
+  /rating/user:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.GetUserRatings'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: GetUserRatings User
+      tags:
+      - Rating
   /user:
     post:
       responses:

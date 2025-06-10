@@ -87,7 +87,7 @@ func (c *ratingController) UpdateRating(ctx *fiber.Ctx) error {
 
 // @Summary Delete Rating
 // @Tags Rating
-// @Success 200 {object} response.SuccessResponse{data=response.DeleteRating}
+// @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
 // @Router /rating [delete]

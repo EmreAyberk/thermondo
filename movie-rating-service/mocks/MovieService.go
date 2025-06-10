@@ -46,6 +46,24 @@ func (_m *MovieService) Create(ctx context.Context, req request.CreateMovie) (*r
 	return r0, r1
 }
 
+// Delete provides a mock function with given fields: ctx, req
+func (_m *MovieService) Delete(ctx context.Context, req request.DeleteMovie) error {
+	ret := _m.Called(ctx, req)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, request.DeleteMovie) error); ok {
+		r0 = rf(ctx, req)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Get provides a mock function with given fields: ctx, req
 func (_m *MovieService) Get(ctx context.Context, req request.GetMovie) (*response.GetMovie, error) {
 	ret := _m.Called(ctx, req)
@@ -74,6 +92,24 @@ func (_m *MovieService) Get(ctx context.Context, req request.GetMovie) (*respons
 	}
 
 	return r0, r1
+}
+
+// Update provides a mock function with given fields: ctx, req
+func (_m *MovieService) Update(ctx context.Context, req request.UpdateMovie) error {
+	ret := _m.Called(ctx, req)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, request.UpdateMovie) error); ok {
+		r0 = rf(ctx, req)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewMovieService creates a new instance of MovieService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

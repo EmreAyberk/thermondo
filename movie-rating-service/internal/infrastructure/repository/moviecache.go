@@ -51,7 +51,15 @@ func (c *cachedMovieRepository) Get(ctx context.Context, id uint) (*domain.Movie
 }
 
 func (c *cachedMovieRepository) Create(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) (*domain.Movie, error) {
-	return c.movieRepository.Create(ctx, movie)
+	return c.movieRepository.Create(ctx, movie, tx...)
+}
+
+func (c *cachedMovieRepository) Update(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error {
+	return c.movieRepository.Update(ctx, movie, tx...)
+}
+
+func (c *cachedMovieRepository) Delete(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error {
+	return c.movieRepository.Delete(ctx, movie, tx...)
 }
 
 func (c *cachedMovieRepository) List(ctx context.Context) ([]domain.Movie, error) {

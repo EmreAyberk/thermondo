@@ -13,6 +13,8 @@ type movieRepository struct {
 
 type MovieRepository interface {
 	Create(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) (*domain.Movie, error)
+	Update(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error
+	Delete(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error
 	Get(ctx context.Context, id uint) (*domain.Movie, error)
 	List(ctx context.Context) ([]domain.Movie, error)
 	AddRating(ctx context.Context, movieID uint, score float64, tx ...*gorm.DB) error
@@ -36,6 +38,39 @@ func (r *movieRepository) Create(ctx context.Context, movie domain.Movie, tx ...
 		return nil, err
 	}
 	return &movie, nil
+}
+
+func (r *movieRepository) Update(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error {
+	db := r.DB
+	if len(tx) > 0 {
+		db = tx[0]
+	}
+
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	return db.WithContext(ctxWithTimeout).
+		Model(&domain.Movie{}).
+		Where("id = ?", movie.ID).
+		Updates(map[string]interface{}{
+			"title":       movie.Title,
+			"description": movie.Description,
+			"genre":       movie.Genre,
+			"director":    movie.Director,
+			"year":        movie.Year,
+		}).Error
+}
+
+func (r *movieRepository) Delete(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error {
+	db := r.DB
+	if len(tx) > 0 {
+		db = tx[0]
+	}
+
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	return db.WithContext(ctxWithTimeout).Where("id = ?", movie.ID).Delete(&domain.Movie{}).Error
 }
 
 func (r *movieRepository) Get(ctx context.Context, id uint) (*domain.Movie, error) {

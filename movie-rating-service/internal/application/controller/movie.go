@@ -22,6 +22,8 @@ func NewMovieController(app *fiber.App, movieService service.MovieService) {
 	controller := &movieController{movieService: movieService}
 
 	app.Post("/movie", authMiddleware.AdminHandler, controller.CreateMovie)
+	app.Put("/movie/:id", authMiddleware.AdminHandler, controller.UpdateMovie)
+	app.Delete("/movie/:id", authMiddleware.AdminHandler, controller.DeleteMovie)
 	app.Get("/movie/:id", controller.GetMovie)
 
 }
@@ -46,6 +48,60 @@ func (c *movieController) GetMovie(ctx *fiber.Ctx) error {
 		return err
 	}
 	return ctx.Status(fiber.StatusOK).JSON(response.Success(res))
+}
+
+// @Summary Update Movie
+// @Tags Movie
+// @Success 200 {object} response.SuccessResponse{data=response.UpdateMovie}
+// @Success 400 {object} response.ErrorResponse
+// @Success 500 {object} response.ErrorResponse
+// @Router /movie [put]
+func (c *movieController) UpdateMovie(ctx *fiber.Ctx) error {
+	var req request.UpdateMovie
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	id := ctx.Params("id")
+	req.ID = cast.ToUint(id)
+
+	err := validate.V.Struct(req)
+	if err != nil {
+		return err
+	}
+
+	err = c.movieService.Update(ctx.UserContext(), req)
+	if err != nil {
+		slog.Info("Movie could not updated")
+		return err
+	}
+
+	slog.Info("Movie updated")
+	return ctx.Status(fiber.StatusCreated).JSON(response.Success(struct{}{}))
+}
+
+// @Summary Delete Movie
+// @Tags Movie
+// @Success 200 {object} response.SuccessResponse{data=response.DeleteMovie}
+// @Success 400 {object} response.ErrorResponse
+// @Success 500 {object} response.ErrorResponse
+// @Router /movie [delete]
+func (c *movieController) DeleteMovie(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	req := request.DeleteMovie{ID: cast.ToUint(id)}
+
+	err := validate.V.Struct(req)
+	if err != nil {
+		return err
+	}
+
+	err = c.movieService.Delete(ctx.UserContext(), req)
+	if err != nil {
+		slog.Info("Movie could not deleted")
+		return err
+	}
+
+	slog.Info("Movie deleted")
+	return ctx.Status(fiber.StatusCreated).JSON(response.Success(struct{}{}))
 }
 
 // @Summary Create Movie

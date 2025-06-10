@@ -78,6 +78,31 @@ func (_m *MovieRepository) Create(ctx context.Context, movie domain.Movie, tx ..
 	return r0, r1
 }
 
+// Delete provides a mock function with given fields: ctx, movie, tx
+func (_m *MovieRepository) Delete(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, movie)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Movie, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, movie, tx...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeleteRating provides a mock function with given fields: ctx, movieID, score, tx
 func (_m *MovieRepository) DeleteRating(ctx context.Context, movieID uint, score float64, tx ...*gorm.DB) error {
 	_va := make([]interface{}, len(tx))
@@ -161,6 +186,31 @@ func (_m *MovieRepository) List(ctx context.Context) ([]domain.Movie, error) {
 	}
 
 	return r0, r1
+}
+
+// Update provides a mock function with given fields: ctx, movie, tx
+func (_m *MovieRepository) Update(ctx context.Context, movie domain.Movie, tx ...*gorm.DB) error {
+	_va := make([]interface{}, len(tx))
+	for _i := range tx {
+		_va[_i] = tx[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, movie)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Movie, ...*gorm.DB) error); ok {
+		r0 = rf(ctx, movie, tx...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // UpdateRating provides a mock function with given fields: ctx, movieID, oldScore, newScore, tx

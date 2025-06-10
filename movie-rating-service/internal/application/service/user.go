@@ -27,7 +27,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 func (s *userService) Get(ctx context.Context, req request.GetUser) (*response.GetUser, error) {
 	user, err := s.userRepository.GetByID(ctx, req.ID)
 	if err != nil {
-		return nil, fmt.Errorf("error occurred while finding user: %w", err)
+		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	return user.GetUserResponse(), nil
 }
@@ -51,7 +51,7 @@ func (s *userService) Create(ctx context.Context, req request.CreateUser) (*resp
 func (s *userService) IsAuthorized(ctx context.Context, req request.Login) (*response.GetUser, error) {
 	user, err := s.userRepository.GetByUsername(ctx, req.Username)
 	if err != nil {
-		return nil, fmt.Errorf("error occurred while logging in: %w", err)
+		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {

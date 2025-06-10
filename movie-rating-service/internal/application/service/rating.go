@@ -36,18 +36,16 @@ func (s *ratingService) Create(ctx context.Context, req request.CreateRating) (*
 		Review:  req.Review,
 	}, tx)
 	if err != nil {
-		err = tx.Rollback().Error
-		if err != nil {
-			return nil, fmt.Errorf("failed to rollback rate movie: %w", err)
+		if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+			return nil, fmt.Errorf("failed to rollback rate movie: %w", rollbackErr)
 		}
 		return nil, fmt.Errorf("failed to rate movie: %w", err)
 	}
 
 	err = s.movieRepository.AddRating(ctx, req.MovieID, req.Score, tx)
 	if err != nil {
-		err = tx.Rollback().Error
-		if err != nil {
-			return nil, fmt.Errorf("failed to rollback add rating: %w", err)
+		if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+			return nil, fmt.Errorf("failed to rollback add rating: %w", rollbackErr)
 		}
 		return nil, fmt.Errorf("failed to add rating: %w", err)
 	}
@@ -90,18 +88,16 @@ func (s *ratingService) Update(ctx context.Context, req request.UpdateRating) (*
 		Review:  req.Review,
 	}, tx)
 	if err != nil {
-		err = tx.Rollback().Error
-		if err != nil {
-			return nil, fmt.Errorf("ailed to rollback rate movie: %w", err)
+		if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+			return nil, fmt.Errorf("ailed to rollback rate movie: %w", rollbackErr)
 		}
 		return nil, fmt.Errorf("failed to rate movie: %w", err)
 	}
 
 	err = s.movieRepository.UpdateRating(ctx, req.MovieID, rating.Score, req.Score, tx)
 	if err != nil {
-		err = tx.Rollback().Error
-		if err != nil {
-			return nil, fmt.Errorf("failed to rollback update rating: %w", err)
+		if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+			return nil, fmt.Errorf("failed to rollback update rating: %w", rollbackErr)
 		}
 		return nil, fmt.Errorf("failed to update rating: %w", err)
 	}
@@ -128,18 +124,16 @@ func (s *ratingService) Delete(ctx context.Context, req request.DeleteRating) er
 	}, tx)
 
 	if err != nil {
-		err = tx.Rollback().Error
-		if err != nil {
-			return fmt.Errorf("ailed to rollback rate movie: %w", err)
+		if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+			return fmt.Errorf("ailed to rollback rate movie: %w", rollbackErr)
 		}
 		return fmt.Errorf("failed to rate movie: %w", err)
 	}
 
 	err = s.movieRepository.DeleteRating(ctx, req.MovieID, rating.Score, tx)
 	if err != nil {
-		err = tx.Rollback().Error
-		if err != nil {
-			return fmt.Errorf("failed to rollback update rating: %w", err)
+		if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+			return fmt.Errorf("failed to rollback update rating: %w", rollbackErr)
 		}
 		return fmt.Errorf("failed to update rating: %w", err)
 	}

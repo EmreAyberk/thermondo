@@ -264,7 +264,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rating": {
+        "/movie/{id}/rating": {
             "post": {
                 "security": [
                     {
@@ -276,6 +276,13 @@ const docTemplate = `{
                 ],
                 "summary": "Create Rating",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Movie Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Rating create payload",
                         "name": "body",
@@ -331,13 +338,11 @@ const docTemplate = `{
                 "summary": "Delete Rating",
                 "parameters": [
                     {
-                        "description": "Rating delete payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.DeleteRating"
-                        }
+                        "type": "string",
+                        "description": "Movie Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -372,6 +377,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update Rating",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Movie Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Rating update payload",
                         "name": "body",
@@ -590,14 +602,9 @@ const docTemplate = `{
         "request.CreateRating": {
             "type": "object",
             "required": [
-                "movie_id",
-                "score",
-                "userID"
+                "score"
             ],
             "properties": {
-                "movie_id": {
-                    "type": "integer"
-                },
                 "review": {
                     "type": "string"
                 },
@@ -605,9 +612,6 @@ const docTemplate = `{
                     "type": "number",
                     "maximum": 5,
                     "minimum": 0
-                },
-                "userID": {
-                    "type": "integer"
                 }
             }
         },
@@ -644,21 +648,6 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
-                }
-            }
-        },
-        "request.DeleteRating": {
-            "type": "object",
-            "required": [
-                "movie_id",
-                "userID"
-            ],
-            "properties": {
-                "movie_id": {
-                    "type": "integer"
-                },
-                "userID": {
-                    "type": "integer"
                 }
             }
         },
@@ -707,14 +696,9 @@ const docTemplate = `{
         "request.UpdateRating": {
             "type": "object",
             "required": [
-                "movie_id",
-                "score",
-                "userID"
+                "score"
             ],
             "properties": {
-                "movie_id": {
-                    "type": "integer"
-                },
                 "review": {
                     "type": "string"
                 },
@@ -722,9 +706,6 @@ const docTemplate = `{
                     "type": "number",
                     "maximum": 5,
                     "minimum": 0
-                },
-                "userID": {
-                    "type": "integer"
                 }
             }
         },

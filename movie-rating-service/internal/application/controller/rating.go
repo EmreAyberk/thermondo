@@ -22,25 +22,37 @@ func NewRatingController(app *fiber.App, ratingService service.RatingService) {
 
 	controller := &ratingController{ratingService: ratingService}
 
-	app.Post("/rating", authMiddleware.UserHandler, controller.CreateRating)
-	app.Patch("/rating", authMiddleware.UserHandler, controller.UpdateRating)
-	app.Delete("/rating", authMiddleware.UserHandler, controller.DeleteRating)
-	app.Get("/rating/user", authMiddleware.UserHandler, controller.GetUserRatings)
+	// Good improvement will be separating it from different groups, maybe separating it to movie and user.
+	// It depends on the team choice
+
+	app.Post("movie/:id/rating", authMiddleware.UserHandler, controller.CreateRating)
+	app.Patch("movie/:id/rating", authMiddleware.UserHandler, controller.UpdateRating)
+	app.Delete("movie/:id/rating", authMiddleware.UserHandler, controller.DeleteRating)
+	app.Get("user/rating", authMiddleware.UserHandler, controller.GetUserRatings)
 }
 
 // @Summary Create Rating
 // @Tags Rating
+// @Param id path string true "Movie Id"
 // @Param body body request.CreateRating true "Rating create payload"
 // @Success 200 {object} response.SuccessResponse{data=response.CreateRating}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
 // @Security BearerAuth
-// @Router /rating [post]
+// @Router /movie/{id}/rating [post]
 func (c *ratingController) CreateRating(ctx *fiber.Ctx) error {
 	var req request.CreateRating
 	if err := ctx.BodyParser(&req); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
+
+	id := ctx.Params("id")
+	req.MovieID = cast.ToUint(id)
+
+	claims := ctx.Locals("user").(jwt.MapClaims)
+
+	req.UserID = cast.ToUint(claims["user_id"])
+
 	err := validate.V.Struct(req)
 	if err != nil {
 		return err
@@ -58,17 +70,21 @@ func (c *ratingController) CreateRating(ctx *fiber.Ctx) error {
 
 // @Summary Update Rating
 // @Tags Rating
+// @Param id path string true "Movie Id"
 // @Param body body request.UpdateRating true "Rating update payload"
 // @Success 200 {object} response.SuccessResponse{data=response.UpdateRating}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
 // @Security BearerAuth
-// @Router /rating [patch]
+// @Router /movie/{id}/rating [patch]
 func (c *ratingController) UpdateRating(ctx *fiber.Ctx) error {
 	var req request.UpdateRating
 	if err := ctx.BodyParser(&req); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
+
+	id := ctx.Params("id")
+	req.MovieID = cast.ToUint(id)
 
 	claims := ctx.Locals("user").(jwt.MapClaims)
 
@@ -91,17 +107,17 @@ func (c *ratingController) UpdateRating(ctx *fiber.Ctx) error {
 
 // @Summary Delete Rating
 // @Tags Rating
-// @Param body body request.DeleteRating true "Rating delete payload"
+// @Param id path string true "Movie Id"
 // @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
 // @Security BearerAuth
-// @Router /rating [delete]
+// @Router /movie/{id}/rating [delete]
 func (c *ratingController) DeleteRating(ctx *fiber.Ctx) error {
 	var req request.DeleteRating
-	if err := ctx.BodyParser(&req); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
-	}
+
+	id := ctx.Params("id")
+	req.MovieID = cast.ToUint(id)
 
 	claims := ctx.Locals("user").(jwt.MapClaims)
 

@@ -30,7 +30,7 @@ func NewMovieService(movieRepository repository.MovieRepository) MovieService {
 func (s *movieService) Get(ctx context.Context, req request.GetMovie) (*response.GetMovie, error) {
 	movie, err := s.movieRepository.Get(ctx, req.ID)
 	if err != nil {
-		return nil, fmt.Errorf("error occurred while finding movie: %w", err)
+		return nil, fmt.Errorf("failed to get movie: %w", err)
 	}
 	return movie.GetMovieResponse(), nil
 }

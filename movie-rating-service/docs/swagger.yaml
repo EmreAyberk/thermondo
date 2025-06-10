@@ -17,20 +17,14 @@ definitions:
     type: object
   request.CreateRating:
     properties:
-      movie_id:
-        type: integer
       review:
         type: string
       score:
         maximum: 5
         minimum: 0
         type: number
-      userID:
-        type: integer
     required:
-    - movie_id
     - score
-    - userID
     type: object
   request.CreateUser:
     properties:
@@ -56,16 +50,6 @@ definitions:
     - password
     - surname
     - username
-    type: object
-  request.DeleteRating:
-    properties:
-      movie_id:
-        type: integer
-      userID:
-        type: integer
-    required:
-    - movie_id
-    - userID
     type: object
   request.Login:
     properties:
@@ -97,20 +81,14 @@ definitions:
     type: object
   request.UpdateRating:
     properties:
-      movie_id:
-        type: integer
       review:
         type: string
       score:
         maximum: 5
         minimum: 0
         type: number
-      userID:
-        type: integer
     required:
-    - movie_id
     - score
-    - userID
     type: object
   response.CreateMovie:
     properties:
@@ -377,15 +355,14 @@ paths:
       summary: Update Movie
       tags:
       - Movie
-  /rating:
+  /movie/{id}/rating:
     delete:
       parameters:
-      - description: Rating delete payload
-        in: body
-        name: body
+      - description: Movie Id
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/request.DeleteRating'
+        type: string
       responses:
         "200":
           description: OK
@@ -406,6 +383,11 @@ paths:
       - Rating
     patch:
       parameters:
+      - description: Movie Id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Rating update payload
         in: body
         name: body
@@ -437,6 +419,11 @@ paths:
       - Rating
     post:
       parameters:
+      - description: Movie Id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Rating create payload
         in: body
         name: body

@@ -64,6 +64,7 @@ func main() {
 
 	prometheus := fiberprometheus.New("movie-rating-service")
 	prometheus.RegisterAt(app, "/metrics")
+	app.Use(prometheus.Middleware)
 
 	app.Get("/monitor", monitor.New())
 

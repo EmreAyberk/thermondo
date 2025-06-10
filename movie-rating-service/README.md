@@ -151,9 +151,10 @@ The seeder does **not** run automatically with the app; you must invoke it manua
 
 ---
 
-## 📈 Monitoring
+## 📈 Metric & Monitoring
 
 * **Prometheus Metrics:** [http://localhost:8080/metrics](http://localhost:8080/metrics)
+* **Fiber Monitoring UI:** [http://localhost:8080/monitor](http://localhost:8080/monitor)
 
 ---
 

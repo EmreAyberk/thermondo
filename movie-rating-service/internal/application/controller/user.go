@@ -39,6 +39,7 @@ func NewUserController(app *fiber.App, userService service.UserService) {
 
 // @Summary Create User
 // @Tags User
+// @Param body body request.CreateUser true "User create payload"
 // @Success 200 {object} response.SuccessResponse{data=response.CreateUser}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
@@ -77,7 +78,7 @@ func (c *userController) CreateUser(ctx *fiber.Ctx) error {
 // @Success 200 {object} response.SuccessResponse{data=response.GetUser}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
-// @Router /user/:id [get]
+// @Router /user/{id} [get]
 func (c *userController) GetUser(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	req := request.GetUser{ID: cast.ToUint(id)}
@@ -96,6 +97,7 @@ func (c *userController) GetUser(ctx *fiber.Ctx) error {
 
 // @Summary Login
 // @Tags User
+// @Param body body request.Login true "User login payload"
 // @Success 200 {object} response.SuccessResponse{data=string} // JWT token
 // @Success 400 {object} response.ErrorResponse
 // @Success 401 {object} response.ErrorResponse

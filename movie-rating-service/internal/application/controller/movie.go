@@ -34,7 +34,8 @@ func NewMovieController(app *fiber.App, movieService service.MovieService) {
 // @Success 200 {object} response.SuccessResponse{data=response.GetMovie}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
-// @Router /movie/:id [get]
+// @Security BearerAuth
+// @Router /movie/{id} [get]
 func (c *movieController) GetMovie(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	req := request.GetMovie{ID: cast.ToUint(id)}
@@ -52,10 +53,13 @@ func (c *movieController) GetMovie(ctx *fiber.Ctx) error {
 
 // @Summary Update Movie
 // @Tags Movie
+// @Param id   path     int  true  "Movie ID"
+// @Param body body request.UpdateMovie true "Movie update payload"
 // @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
-// @Router /movie [put]
+// @Security BearerAuth
+// @Router /movie/{id} [put]
 func (c *movieController) UpdateMovie(ctx *fiber.Ctx) error {
 	var req request.UpdateMovie
 	if err := ctx.BodyParser(&req); err != nil {
@@ -81,10 +85,12 @@ func (c *movieController) UpdateMovie(ctx *fiber.Ctx) error {
 
 // @Summary Delete Movie
 // @Tags Movie
+// @Param id   path      int  true  "Movie ID"
 // @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
-// @Router /movie [delete]
+// @Security BearerAuth
+// @Router /movie/{id} [delete]
 func (c *movieController) DeleteMovie(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	req := request.DeleteMovie{ID: cast.ToUint(id)}
@@ -106,6 +112,7 @@ func (c *movieController) DeleteMovie(ctx *fiber.Ctx) error {
 
 // @Summary Create Movie
 // @Tags Movie
+// @Param body body request.CreateMovie true "Movie create payload"
 // @Success 200 {object} response.SuccessResponse{data=response.CreateMovie}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse

@@ -30,9 +30,11 @@ func NewRatingController(app *fiber.App, ratingService service.RatingService) {
 
 // @Summary Create Rating
 // @Tags Rating
+// @Param body body request.CreateRating true "Rating create payload"
 // @Success 200 {object} response.SuccessResponse{data=response.CreateRating}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /rating [post]
 func (c *ratingController) CreateRating(ctx *fiber.Ctx) error {
 	var req request.CreateRating
@@ -56,9 +58,11 @@ func (c *ratingController) CreateRating(ctx *fiber.Ctx) error {
 
 // @Summary Update Rating
 // @Tags Rating
+// @Param body body request.UpdateRating true "Rating update payload"
 // @Success 200 {object} response.SuccessResponse{data=response.UpdateRating}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /rating [patch]
 func (c *ratingController) UpdateRating(ctx *fiber.Ctx) error {
 	var req request.UpdateRating
@@ -87,9 +91,11 @@ func (c *ratingController) UpdateRating(ctx *fiber.Ctx) error {
 
 // @Summary Delete Rating
 // @Tags Rating
+// @Param body body request.DeleteRating true "Rating delete payload"
 // @Success 200 {object} response.SuccessResponse
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /rating [delete]
 func (c *ratingController) DeleteRating(ctx *fiber.Ctx) error {
 	var req request.DeleteRating
@@ -121,6 +127,7 @@ func (c *ratingController) DeleteRating(ctx *fiber.Ctx) error {
 // @Success 200 {object} response.SuccessResponse{data=response.GetUserRatings}
 // @Success 400 {object} response.ErrorResponse
 // @Success 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /rating/user [get]
 func (c *ratingController) GetUserRatings(ctx *fiber.Ctx) error {
 	claims := ctx.Locals("user").(jwt.MapClaims)

@@ -1,5 +1,117 @@
-basePath: /
 definitions:
+  request.CreateMovie:
+    properties:
+      description:
+        type: string
+      director:
+        type: string
+      genre:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
+    required:
+    - director
+    - title
+    type: object
+  request.CreateRating:
+    properties:
+      movie_id:
+        type: integer
+      review:
+        type: string
+      score:
+        maximum: 5
+        minimum: 0
+        type: number
+      userID:
+        type: integer
+    required:
+    - movie_id
+    - score
+    - userID
+    type: object
+  request.CreateUser:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      is_admin:
+        type: boolean
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      surname:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - surname
+    - username
+    type: object
+  request.DeleteRating:
+    properties:
+      movie_id:
+        type: integer
+      userID:
+        type: integer
+    required:
+    - movie_id
+    - userID
+    type: object
+  request.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  request.UpdateMovie:
+    properties:
+      description:
+        type: string
+      director:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      year:
+        type: integer
+    required:
+    - director
+    - title
+    type: object
+  request.UpdateRating:
+    properties:
+      movie_id:
+        type: integer
+      review:
+        type: string
+      score:
+        maximum: 5
+        minimum: 0
+        type: number
+      userID:
+        type: integer
+    required:
+    - movie_id
+    - score
+    - userID
+    type: object
   response.CreateMovie:
     properties:
       id:
@@ -120,6 +232,13 @@ info:
 paths:
   /login:
     post:
+      parameters:
+      - description: User login payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.Login'
       responses:
         "200":
           description: OK
@@ -142,24 +261,14 @@ paths:
       tags:
       - User
   /movie:
-    delete:
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.SuccessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      summary: Delete Movie
-      tags:
-      - Movie
     post:
+      parameters:
+      - description: Movie create payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateMovie'
       responses:
         "200":
           description: OK
@@ -181,7 +290,14 @@ paths:
       summary: Create Movie
       tags:
       - Movie
-    put:
+  /movie/{id}:
+    delete:
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -195,10 +311,11 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
-      summary: Update Movie
+      security:
+      - BearerAuth: []
+      summary: Delete Movie
       tags:
       - Movie
-  /movie/:id:
     get:
       parameters:
       - description: Movie Id
@@ -224,11 +341,24 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: GetByID Movie
       tags:
       - Movie
-  /rating:
-    delete:
+    put:
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Movie update payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateMovie'
       responses:
         "200":
           description: OK
@@ -242,10 +372,46 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Movie
+      tags:
+      - Movie
+  /rating:
+    delete:
+      parameters:
+      - description: Rating delete payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeleteRating'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Rating
       tags:
       - Rating
     patch:
+      parameters:
+      - description: Rating update payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateRating'
       responses:
         "200":
           description: OK
@@ -264,10 +430,19 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Rating
       tags:
       - Rating
     post:
+      parameters:
+      - description: Rating create payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateRating'
       responses:
         "200":
           description: OK
@@ -286,6 +461,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Rating
       tags:
       - Rating
@@ -309,11 +486,20 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: GetUserRatings User
       tags:
       - Rating
   /user:
     post:
+      parameters:
+      - description: User create payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateUser'
       responses:
         "200":
           description: OK
@@ -335,7 +521,7 @@ paths:
       summary: Create User
       tags:
       - User
-  /user/:id:
+  /user/{id}:
     get:
       parameters:
       - description: User Id
@@ -364,4 +550,9 @@ paths:
       summary: GetByID User
       tags:
       - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

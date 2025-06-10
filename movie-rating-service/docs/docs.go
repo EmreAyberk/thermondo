@@ -25,6 +25,17 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "User login payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Login"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -60,37 +71,22 @@ const docTemplate = `{
             }
         },
         "/movie": {
-            "put": {
-                "tags": [
-                    "Movie"
-                ],
-                "summary": "Update Movie",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    }
-                }
-            },
             "post": {
                 "tags": [
                     "Movie"
                 ],
                 "summary": "Create Movie",
+                "parameters": [
+                    {
+                        "description": "Movie create payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateMovie"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -123,36 +119,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "tags": [
-                    "Movie"
-                ],
-                "summary": "Delete Movie",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    }
-                }
             }
         },
-        "/movie/:id": {
+        "/movie/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Movie"
                 ],
@@ -198,14 +173,119 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Movie"
+                ],
+                "summary": "Update Movie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Movie ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Movie update payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateMovie"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Movie"
+                ],
+                "summary": "Delete Movie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Movie ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/rating": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Rating"
                 ],
                 "summary": "Create Rating",
+                "parameters": [
+                    {
+                        "description": "Rating create payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateRating"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -240,10 +320,26 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Rating"
                 ],
                 "summary": "Delete Rating",
+                "parameters": [
+                    {
+                        "description": "Rating delete payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.DeleteRating"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -266,10 +362,26 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Rating"
                 ],
                 "summary": "Update Rating",
+                "parameters": [
+                    {
+                        "description": "Rating update payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateRating"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -306,6 +418,11 @@ const docTemplate = `{
         },
         "/rating/user": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Rating"
                 ],
@@ -350,6 +467,17 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Create User",
+                "parameters": [
+                    {
+                        "description": "User create payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateUser"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -384,7 +512,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/:id": {
+        "/user/{id}": {
             "get": {
                 "tags": [
                     "User"
@@ -435,6 +563,171 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "request.CreateMovie": {
+            "type": "object",
+            "required": [
+                "director",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "director": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.CreateRating": {
+            "type": "object",
+            "required": [
+                "movie_id",
+                "score",
+                "userID"
+            ],
+            "properties": {
+                "movie_id": {
+                    "type": "integer"
+                },
+                "review": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number",
+                    "maximum": 5,
+                    "minimum": 0
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.CreateUser": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "surname",
+                "username"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.DeleteRating": {
+            "type": "object",
+            "required": [
+                "movie_id",
+                "userID"
+            ],
+            "properties": {
+                "movie_id": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.Login": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateMovie": {
+            "type": "object",
+            "required": [
+                "director",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "director": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.UpdateRating": {
+            "type": "object",
+            "required": [
+                "movie_id",
+                "score",
+                "userID"
+            ],
+            "properties": {
+                "movie_id": {
+                    "type": "integer"
+                },
+                "review": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number",
+                    "maximum": 5,
+                    "minimum": 0
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.CreateMovie": {
             "type": "object",
             "properties": {
@@ -604,6 +897,13 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -611,7 +911,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "movieratingservice",
 	Description:      "",
